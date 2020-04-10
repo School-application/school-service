@@ -1,10 +1,12 @@
 package com.schoolservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schoolservice.controller.TeacherController;
 import com.schoolservice.dto.request.TeacherRequestDto;
+import com.schoolservice.dto.response.ErrorResponseDto;
 import com.schoolservice.dto.response.TeacherResponseDto;
+import com.schoolservice.handler.ErrorResponseExceptionHandler;
+import com.schoolservice.service.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,8 +55,9 @@ public class TeacherControllerTest {
                 .dateOfBirth(LocalDate.of(2011, 1, 1))
                 .build();
 
-        //add controller advice for negative cases
-        mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(teacherController)
+                .setControllerAdvice(new ErrorResponseExceptionHandler())
+                .build();
     }
 
     @Test
@@ -106,5 +108,141 @@ public class TeacherControllerTest {
                 .andExpect(status().isCreated());
 
         verify(teacherServiceMock).createTeacher(teacherRequestDto);
+    }
+
+    @Test
+    public void createTeacher_passEmptyUserName_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setUserName(" ");
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: User name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passedUserNameIsNull_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setUserName(null);
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: User name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passEmptyFirstName_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setFirstName(" ");
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: First name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passedFirstNameIsNull_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setFirstName(null);
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: First name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passEmptyLastName_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setLastName(" ");
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: Last name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passedLastNameIsNull_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setLastName(null);
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: Last name shouldn't be blank.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passedEmailIsNotValid_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setEmail("testemail");
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: Email hasn't valid format.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
+    }
+
+    @Test
+    public void createTeacher_passedDateOfBirthIsNull_ShouldReturnBadRequestHttpStatus() throws Exception {
+        teacherRequestDto.setDateOfBirth(null);
+
+        MvcResult mvcResult = mockMvc.perform(post(TEACHER_CONTROLLER_GENERAL_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(teacherRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        ErrorResponseDto errorResponseDtoActual = objectMapper.readValue(responseString, ErrorResponseDto.class);
+
+        assertEquals("Validation failed: Date of birth shouldn't be null.", errorResponseDtoActual.getMessage());
+        assertEquals(400, errorResponseDtoActual.getStatusCode());
     }
 }

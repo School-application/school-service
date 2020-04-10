@@ -1,11 +1,13 @@
 package com.schoolservice.controller;
 
-import com.schoolservice.TeacherService;
+import com.schoolservice.service.TeacherService;
 import com.schoolservice.dto.request.TeacherRequestDto;
 import com.schoolservice.dto.response.TeacherResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/teacher")
@@ -37,7 +39,7 @@ public class TeacherController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createTeacher(@RequestBody TeacherRequestDto teacherRequestDto) {
+    public ResponseEntity<Void> createTeacher(@RequestBody @Valid TeacherRequestDto teacherRequestDto) {
         teacherService.createTeacher(teacherRequestDto);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

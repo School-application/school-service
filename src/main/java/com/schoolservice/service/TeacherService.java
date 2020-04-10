@@ -1,4 +1,4 @@
-package com.schoolservice;
+package com.schoolservice.service;
 
 import com.schoolservice.dto.request.TeacherRequestDto;
 import com.schoolservice.dto.response.TeacherResponseDto;
